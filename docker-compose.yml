@@ -5,7 +5,7 @@ services:
     container_name: lab-backend
     ports:
       - "3001:3001"
-    restart: unlees-stopped
+    restart: unless-stopped
 
   frontend:
     build: ./apps/frontend
@@ -16,7 +16,7 @@ services:
       - "8080:8080"
     depends_on:
       - backend
-    restart: unlees-stopped
+    restart: unless-stopped
 
   #  recolector de metricas
   prometheus:
@@ -29,7 +29,7 @@ services:
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
-    restart: unlees-stopped
+    restart: unless-stopped
 
   # metricas del hardware
   node-exporter:
@@ -39,10 +39,10 @@ services:
       - "--path.rootfs=/host"
     pid: host
     volumes:
-      - /:/host:ro,rslave
+      - ./:/host:ro,rslave
     ports:
       - "9100:9100"
-    restart: unlees-stopped
+    restart: unless-stopped
 
   # metricas de contenedores
   cadvisor:

@@ -1,9 +1,8 @@
-const { timeStamp } = require("console");
 const express = require("express");
 const client = require("prom-client");
 const { Worker } = require("worker_threads");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const SERVICE = "backend";
 
 // logger
@@ -85,13 +84,13 @@ app.get("/healthz", (req, res) => res.json({ status: "ok" }));
 // Sirve para superar el 50% de CPU y disparar la alarma durante la clase.
 app.get("/load", (req, res) => {
   const seconds = Math.min(parseInt(req.query.seconds, 10) || 30, 120);
-  const workerNode = `
+  const workerCode = `
         const end = Date.now() + ${seconds} * 1000;
         while (Date.now() < end) { Math.sqrt(Math.random() * Math.random()); }
     `;
-  const worker = new Worker(workerNode, { eval: true });
+  const worker = new Worker(workerCode, { eval: true });
   worker.on("error", () => {});
-  log("WARM", "cpu_load_test_started", { seconds });
+  log("WARN", "cpu_load_test_started", { seconds });
   res.json({ status: "carga de CPU iniciada", seconds });
 });
 
